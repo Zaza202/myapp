@@ -24,8 +24,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      #- name: Run tests
-      #  run: npm test
+      # Uncomment the following step to run tests
+      # - name: Run tests
+      #   run: npm test
 
       - name: Build Docker image
         run: |
@@ -46,9 +47,11 @@ jobs:
         with:
           version: 'latest'
 
+      - name: Create .kube directory
+        run: mkdir -p $HOME/.kube
+
+      - name: Set up KUBECONFIG
+        run: echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+
       - name: Deploy to Kubernetes
-        env:
-          KUBECONFIG: ${{ secrets.KUBECONFIG }}  # Use the Kubernetes config secret
-        run: |
-          echo "${KUBECONFIG}" > $HOME/.kube/config
-          kubectl apply -f k8s/deployment.yaml
+        run: kubectl apply -f k8s/deployment.yaml
