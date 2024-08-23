@@ -1,0 +1,17 @@
+{
+    "name": "myapp",
+    "version": "1.0.0",
+    "description": "A sample Node.js application for containerization with Podman and Kubernetes",
+    "main": "app.js",
+    "scripts": {
+      "start": "node app.js"
+    },
+    "dependencies": {
+      "express": "^4.18.2"
+    },
+    "engines": {
+      "node": ">=20.17.0"
+    },
+    "author": "Mohamed Mahfouz",
+    "license": "ISC"
+  }  
