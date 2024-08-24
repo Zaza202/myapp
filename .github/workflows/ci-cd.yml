@@ -70,7 +70,7 @@ jobs:
 
       - name: Deploy to Kubernetes         
         run: |          
-          kubectl apply -f k8s/deployment.yaml                 
+          kubectl apply -f deployment.yaml                 
           kubectl scale deployment myapp --replicas=3          
           sleep 60 #          
           kubectl get pods
