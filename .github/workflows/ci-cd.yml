@@ -24,10 +24,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Uncomment the following step to run tests
-      # - name: Run tests
-      #   run: npm test
-
       - name: Build Docker image
         run: |
           docker build -t docker.io/zaza02/myapp:latest .
@@ -53,8 +49,7 @@ jobs:
       - name: Set up Kubeconfig
         env:
           KUBECONFIG_B64: ${{ secrets.KUBECONFIG }}
-        run: |
-          echo "$KUBECONFIG_B64" | base64 --decode > ~/.kube/config
+        run: echo "$KUBECONFIG_B64" | base64 --decode > ~/.kube/config
 
       - name: Deploy to Kubernetes
         run: kubectl apply -f k8s/deployment.yaml
