@@ -50,8 +50,11 @@ jobs:
       - name: Create .kube directory
         run: mkdir -p $HOME/.kube
 
-      - name: Set up KUBECONFIG
-        run: echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+      - name: Set up Kubeconfig
+        env:
+          KUBECONFIG_B64: ${{ secrets.KUBECONFIG }}
+        run: |
+          echo "$KUBECONFIG_B64" | base64 --decode > ~/.kube/config
 
       - name: Deploy to Kubernetes
         run: kubectl apply -f k8s/deployment.yaml
