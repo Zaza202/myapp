@@ -68,11 +68,10 @@ jobs:
       - name: Pushing Docker Image        
         run: docker push docker.io/zaza02/myapp:latest         
 
-      - name: Orchestration using Kubernetes         
+      - name: Deploy to Kubernetes         
         working-directory: sample-application        
         run: |          
-          kubectl apply -f myappdeploy.yaml --validate=false          
-          kubectl apply -f myappservice.yaml --validate=false          
+          kubectl apply -f k8s/deployment.yaml                 
           kubectl scale deployment myapp --replicas=3          
           sleep 60 #          
           kubectl get pods
