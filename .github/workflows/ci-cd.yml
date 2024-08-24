@@ -1,4 +1,4 @@
-name: Build & Deploy myapp
+name: CI/CD Pipeline
 
 on:  
   push:    
@@ -48,7 +48,7 @@ jobs:
       - name: Set up Node.js        
         uses: actions/setup-node@v4        
         with:          
-          node-version: 18      
+          node-version: 20   
 
       - name: Downloading Package        
         run: npm init -y      
@@ -59,13 +59,14 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}          
           password: ${{ secrets.DOCKER_PASSWORD }}      
 
-      - name: Building Docker Image        
-        run: |          
-          docker build -t myapp:latest ./sample-application          
-          docker tag myapp:latest ismailsabryibm/myapp:1.0      
+      - name: Build Docker image
+        run: |
+          docker build -t docker.io/zaza02/myapp:latest .
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker push docker.io/zaza02/myapp:latest   
 
       - name: Pushing Docker Image        
-        run: docker push ismailsabryibm/myapp:1.0       
+        run: docker push docker.io/zaza02/myapp:latest         
 
       - name: Orchestration using Kubernetes         
         working-directory: sample-application        
