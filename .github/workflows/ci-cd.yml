@@ -20,8 +20,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=your_project_key
-            -Dsonar.organization=your_organization_key 
+            -Dsonar.projectKey=Zaza202_myapp
+            -Dsonar.organization=zaza202
 
   build-deploy:    
     runs-on: ubuntu-latest    
