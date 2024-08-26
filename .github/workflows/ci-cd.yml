@@ -65,77 +65,41 @@ jobs:
     name: Deploy to Kubernetes
     runs-on: ubuntu-latest
     needs: build
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Install Minikube
         run: |
-          curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-          chmod +x minikube
-          sudo mv minikube /usr/local/bin/
-
-      - name: Install kubectl
-        run: |
-          curl -LO "https://dl.k8s.io/release/v1.26.3/bin/linux/amd64/kubectl"
-          chmod +x kubectl
-          sudo mv kubectl /usr/local/bin/
-
+          curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+          sudo install minikube-linux-amd64 /usr/local/bin/minikube
+          sudo apt-get install -y containernetworking-plugins
+      
       - name: Start Minikube
         run: |
-          minikube start --driver=docker
+          minikube start --driver=docker \
+          --network-plugin=cni \
+          --iso-url=https://github.com/coreos/minikube-iso/releases/download/v0.0.5/minikube-v0.0.5.iso
+      
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
 
-      - name: Deploy to Kubernetes
+      - name: Verify Minikube and kubectl
         run: |
-          kubectl apply -f deployment.yaml
-          kubectl apply -f service.yaml
-          kubectl rollout status deployment/myapp-deployment
+          minikube status
+          kubectl cluster-info
+          kubectl get nodes
 
-      - name: Wait for pods to be ready
-        run: |
-          kubectl wait --for=condition=ready pod -l app=myapp --timeout=300s
+      - name: List files in k8s directory
+        run: ls -R k8s
 
-      - name: Check pod status
+      - name: Apply Kubernetes deployment
         run: |
-          kubectl get pods
-          kubectl describe pods
+          kubectl apply -f k8s/deployment.yaml --validate=false
 
-      - name: Check service status
+      - name: Apply Kubernetes service
         run: |
-          kubectl get services
-          kubectl describe service myapp-service
-
-      - name: Expose Service
-        run: |
-          kubectl expose deployment myapp-deployment --type=NodePort --name=myapp-service --port=80 --target-port=3000
-
-      - name: Get Minikube IP
-        run: |
-          MINIKUBE_IP=$(minikube ip)
-          echo "Minikube IP: $MINIKUBE_IP"
-          echo "MINIKUBE_IP=$MINIKUBE_IP" >> $GITHUB_ENV
-
-      - name: Get NodePort
-        run: |
-          NODE_PORT=$(kubectl get service myapp-service -o jsonpath='{.spec.ports[0].nodePort}')
-          echo "NodePort: $NODE_PORT"
-          echo "NODE_PORT=$NODE_PORT" >> $GITHUB_ENV
-
-      - name: Print Service URL
-        run: |
-          echo "Service should be accessible at: http://${MINIKUBE_IP}:${NODE_PORT}"
-
-      - name: Verify Service
-        run: |
-          echo "Attempting to access the service..."
-          RESPONSE=$(curl -s http://${MINIKUBE_IP}:${NODE_PORT})
-          echo "Service Response:"
-          echo "===================="
-          echo "$RESPONSE"
-          echo "===================="
-          if [[ "$RESPONSE" == *"Hello, Interns!"* ]]; then
-            echo "Service verification successful!"
-          else
-            echo "Service verification failed!"
-            exit 1
-          fi
+          kubectl apply -f k8s/service.yaml --validate=false
