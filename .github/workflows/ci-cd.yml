@@ -105,6 +105,10 @@ jobs:
           kubectl get services
           kubectl describe service myapp-service
 
+      - name: Expose Service
+        run: |
+          kubectl expose deployment myapp-deployment --type=NodePort --name=myapp-service --port=80 --target-port=3000
+
       - name: Get Minikube IP
         run: |
           MINIKUBE_IP=$(minikube ip)
