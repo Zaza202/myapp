@@ -81,22 +81,9 @@ jobs:
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
 
-      - name: Install dependencies (conntrack, crictl)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y conntrack
-          curl -LO https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.26.0/crictl-v1.26.0-linux-amd64.tar.gz
-          sudo tar -C /usr/local/bin -xzf crictl-v1.26.0-linux-amd64.tar.gz
-          sudo chmod +x /usr/local/bin/crictl
-          rm crictl-v1.26.0-linux-amd64.tar.gz
-
       - name: Start Minikube
         run: |
-          sudo minikube start --driver=none
-
-      - name: Start Minikube tunnel
-        run: |
-          nohup sudo minikube tunnel > /dev/null 2>&1 &
+          minikube start --driver=docker
 
       - name: Deploy to Kubernetes
         run: |
