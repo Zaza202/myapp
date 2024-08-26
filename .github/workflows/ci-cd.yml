@@ -93,9 +93,6 @@ jobs:
           kubectl cluster-info
           kubectl get nodes
 
-      - name: List files in k8s directory
-        run: ls -R k8s
-
       - name: Apply Kubernetes deployment
         run: |
           kubectl apply -f k8s/deployment.yaml --validate=false
