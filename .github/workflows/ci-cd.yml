@@ -116,16 +116,16 @@ jobs:
         echo "MINIKUBE_IP=$MINIKUBE_IP" >> $GITHUB_ENV
         echo "Minikube IP: $MINIKUBE_IP"
 
-    - name: Get NodePort
-      run: |
+     - name: Get NodePort
+       run: |
         NODE_PORT=$(kubectl get service myapp-service -o jsonpath='{.spec.ports[0].nodePort}')
         echo "NODE_PORT=$NODE_PORT" >> $GITHUB_ENV
         echo "NodePort: $NODE_PORT"
 
-    - name: Print Service URL
-      run: |
+     - name: Print Service URL
+       run: |
         echo "Service should be accessible at: http://${MINIKUBE_IP}:${NODE_PORT}"
 
-    - name: Verify Service
-      run: |
+     - name: Verify Service
+       run: |
         curl -v http://${MINIKUBE_IP}:${NODE_PORT} || true
