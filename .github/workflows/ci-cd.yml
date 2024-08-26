@@ -79,11 +79,11 @@ jobs:
           kubectl apply -f deployment.yaml
           kubectl apply -f service.yaml
 
-      - name: Wait for service to get external IP
+      - name: Get Minikube Service URL
         run: |
-          echo "Waiting for service to get external IP..."
-          sleep 60
-          kubectl get services myapp-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+          SERVICE_URL=$(minikube service myapp-service --url)
+          echo "Service URL: $SERVICE_URL"
+
           
       - name: Get the external IP
         run: |
