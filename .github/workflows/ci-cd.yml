@@ -83,4 +83,9 @@ jobs:
         run: |
           echo "Waiting for service to get external IP..."
           sleep 60
-          kubectl get services myapp-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}'    
+          kubectl get services myapp-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+          
+      - name: Get the external IP
+        run: |
+          EXTERNAL_IP=$(kubectl get svc myapp-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          echo "External IP: $EXTERNAL_IP"
