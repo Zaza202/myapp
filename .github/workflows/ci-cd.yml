@@ -108,14 +108,14 @@ jobs:
       - name: Get Minikube IP
         run: |
           MINIKUBE_IP=$(minikube ip)
-          echo "MINIKUBE_IP=$MINIKUBE_IP" >> $GITHUB_ENV
           echo "Minikube IP: $MINIKUBE_IP"
+          echo "MINIKUBE_IP=$MINIKUBE_IP" >> $GITHUB_ENV
 
       - name: Get NodePort
         run: |
           NODE_PORT=$(kubectl get service myapp-service -o jsonpath='{.spec.ports[0].nodePort}')
-          echo "NODE_PORT=$NODE_PORT" >> $GITHUB_ENV
           echo "NodePort: $NODE_PORT"
+          echo "NODE_PORT=$NODE_PORT" >> $GITHUB_ENV
 
       - name: Print Service URL
         run: |
@@ -123,4 +123,15 @@ jobs:
 
       - name: Verify Service
         run: |
-          curl -v http://${MINIKUBE_IP}:${NODE_PORT} || true
+          echo "Attempting to access the service..."
+          RESPONSE=$(curl -s http://${MINIKUBE_IP}:${NODE_PORT})
+          echo "Service Response:"
+          echo "===================="
+          echo "$RESPONSE"
+          echo "===================="
+          if [[ "$RESPONSE" == *"Hello, Interns!"* ]]; then
+            echo "Service verification successful!"
+          else
+            echo "Service verification failed!"
+            exit 1
+          fi
