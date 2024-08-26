@@ -83,7 +83,11 @@ jobs:
 
       - name: Start Minikube
         run: |
-          minikube start --driver=docker
+          sudo minikube start --driver=none
+          
+      - name: Start Minikube tunnel
+        run: |
+          nohup sudo minikube tunnel > /dev/null 2>&1 &
 
       - name: Deploy to Kubernetes
         run: |
@@ -110,10 +114,6 @@ jobs:
           MINIKUBE_IP=$(minikube ip)
           echo "MINIKUBE_IP=$MINIKUBE_IP" >> $GITHUB_ENV
           echo "Minikube IP: $MINIKUBE_IP"
-
-      - name: Start Minikube tunnel
-        run: sudo minikube tunnel &
-
 
       - name: Get NodePort
         run: |
