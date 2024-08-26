@@ -111,6 +111,10 @@ jobs:
           echo "MINIKUBE_IP=$MINIKUBE_IP" >> $GITHUB_ENV
           echo "Minikube IP: $MINIKUBE_IP"
 
+      - name: Start Minikube tunnel
+        run: sudo minikube tunnel &
+
+
       - name: Get NodePort
         run: |
           NODE_PORT=$(kubectl get service myapp-service -o jsonpath='{.spec.ports[0].nodePort}')
